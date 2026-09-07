@@ -2,6 +2,7 @@
 public class AccountTriggerHandlerTest {
     @isTest
     public static void afetrInsertHandlerTest() {
+        // Puts test data in a List to test bulkification as well
         List<Account> testAccounts = new List<Account>();
         Account testAcc1 = new Account(Name = 'Test Account 1', CustomerPriority__c = 'High');
         Account testAcc2 = new Account(Name = 'Test Account 2', CustomerPriority__c = 'High');
@@ -11,11 +12,11 @@ public class AccountTriggerHandlerTest {
         Test.startTest();
         insert testAccounts;
         Test.stopTest();
-
+        // Selects the newly created cases
         List<Case> createdCases = [SELECT Id, AccountId, OwnerId, Origin, Account.CustomerPriority__c, Account.Name, Priority, Subject FROM Case WHERE AccountId IN :testAccounts];
-
+        // checks if the right amount of cases have been made
         System.assertEquals(2, createdCases.size(), 'Should be 2 case records.');
-
+        // Checks if the newly created cases have the right info
         for (Case newCase : createdCases) {
             System.assertNotEquals(null, newCase.AccountId, 'Case should be related to an Account.');
             System.assertEquals(UserInfo.getUserId(), newCase.OwnerId, 'Case owner should be the same as Account\'s owner.');
