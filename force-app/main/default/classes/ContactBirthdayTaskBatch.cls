@@ -42,7 +42,7 @@ public with sharing class ContactBirthdayTaskBatch implements Database.Batchable
             Integer conAge = targetDate.year() - con.Birthdate.year();
 
             String accName = (con.AccountId != null) ? con.Account.Name : 'an unknown account';
-            String accIndustry = (con.AccountId != null) ? con.Account.Industry : 'unknown';
+            String accIndustry = (con.AccountId != null && con.Account.Industry != null) ? con.Account.Industry : 'unknown';
             
             String comments = 'Today is the birthday of ' + con.Name + '. He/She is now ' + conAge + ' years old. This Contact is an employee of ' + accName + 
                               ', part of the ' + accIndustry + ' industry. Consider making an appropriate gift.';
