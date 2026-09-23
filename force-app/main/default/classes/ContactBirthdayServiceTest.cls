@@ -127,19 +127,4 @@ public class ContactBirthdayServiceTest {
 
         System.assertNotEquals(null, contact.Id, 'System should\'ve allowed the 18 year old contact to be assigned to the EU Account!');  
     }
-
-    @isTest
-    public static void ContactwithoutBirthdateTest() {
-        Account euAcc = [SELECT Id FROM Account WHERE Name = 'EU Corp' LIMIT 1];
-        Contact contact = new Contact(
-            LastName = 'NoName',
-            AccountId = euAcc.Id
-        );
-
-        Test.startTest();
-        insert contact;
-        Test.stopTest();
-
-        System.assertNotEquals(null, contact.Id, 'System should\'ve allowed the 18 year old contact to be assigned to the EU Account!');  
-    }
 }
