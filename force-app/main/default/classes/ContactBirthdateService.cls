@@ -1,10 +1,16 @@
 public with sharing class ContactBirthdateService {
     public static void validateAge(List<Contact> newContacts) {
+        Integer usAccLimit = 21;
+        Integer nonUsAccLimit = 18;
+        Date today = Date.today();
+        Date usLimitDate = today.addYears(-(usAccLimit));
+        Date nonUsLimitDate = today.addYears(-(nonUsAccLimit));
+
         Set<Id> accountIds = new Set<Id>();
         // gets all distinct account Ids
-        for (Contact con : newContacts) {
-            if (con.AccountId != null && con.Birthdate != null) {
-                accountIds.add(con.AccountId);
+        for (Contact contact : newContacts) {
+            if (contact.AccountId != null && contact.Birthdate != null) {
+                accountIds.add(contact.AccountId);
             }
         }
 
@@ -14,19 +20,18 @@ public with sharing class ContactBirthdateService {
             accountMap = new Map<Id, Account>([SELECT Id, BillingCountry FROM Account WHERE ID IN :accountIds]);
         }
 
-        for (Contact con : newContacts) {
-            if (con.Birthdate != null) {
+        for (Contact contact : newContacts) {
+            if (contact.Birthdate != null) {
                 String country = '';
-                Integer age = con.Birthdate.monthsBetween(Date.today()) / 12;
                  
-                if (con.AccountId != null && accountMap.containsKey(con.AccountId)){
-                    country = accountMap.get(con.AccountId).BillingCountry;
+                if (contact.AccountId != null && accountMap.containsKey(contact.AccountId)){
+                    country = accountMap.get(contact.AccountId).BillingCountry;
                 }
 
-                if (country == 'United States' && age < 21) {
-                    con.Birthdate.addError('All contact persons should be of legal age! (US: 21+)');
-                } else if (country != 'United States' && age < 18) {
-                    con.Birthdate.addError('All contact persons should be of legal age! (Non-US: 18+)');
+                if (country == 'United States' && contact.Birthdate > usLimitDate) {
+                    contact.Birthdate.addError('All contact persons should be of legal age! (US: 21+)');
+                } else if (country != 'United States' && contact.Birthdate > nonUsLimitDate) {
+                    contact.Birthdate.addError('All contact persons should be of legal age! (Non-US: 18+)');
                 }
             }
         }
